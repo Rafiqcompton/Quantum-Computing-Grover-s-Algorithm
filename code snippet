@@ -1,0 +1,18 @@
+simplified version in Q#;
+
+operation GroversAlgorithm(target : Int, nQubits : Int) : Bool {
+    mutable result = false;
+    using (qubits = Qubit[nQubits]) {
+        ApplyToEach(H, qubits);
+        for (_ in 1..PowI(2, nQubits / 2)) {
+            Oracle(target, qubits);
+            ApplyToEach(H, qubits);
+            ApplyToEach(X, qubits);
+            Controlled Z(Most(qubits), Tail(qubits));
+            ApplyToEach(X, qubits);
+            ApplyToEach(H, qubits);
+        }
+        set result = IsResultCorrect(target, MResetZ(qubits[0]));
+    }
+    return result;
+}
